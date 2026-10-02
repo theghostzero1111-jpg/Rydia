@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard | {{ site.brand }}{% endblock %}
+{% block bodyclass %}admin-page{% endblock %}
+
+{% block content %}
+<div class="admin-wrap container">
+  <div class="admin-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>{{ stats.total_orders }} orders / {{ stats.total_messages }} messages</p>
+    </div>
+    <div class="admin-actions">
+      <a href="{{ url_for('home') }}" class="btn btn-outline">View Site</a>
+      <a href="{{ url_for('admin_logout') }}" class="btn btn-primary">Log Out</a>
+    </div>
+  </div>
+
+  <div class="admin-stats">
+    <div class="admin-stat"><strong>{{ stats.total_orders }}</strong><span>Total Orders</span></div>
+    <div class="admin-stat"><strong>{{ stats.pending_orders }}</strong><span>Pending</span></div>
+    <div class="admin-stat"><strong>{{ stats.completed_orders }}</strong><span>Completed</span></div>
+    <div class="admin-stat"><strong>{{ stats.total_messages }}</strong><span>Messages</span></div>
+  </div>
+
+  <h2>Orders</h2>
+  {% if orders %}
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Name</th><th>Phone</th><th>Service</th>
+          <th>Network</th><th>Amount</th><th>Recipient</th><th>Notes</th><th>Date</th><th>Status</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td>{{ o.id }}</td>
+          <td>{{ o.full_name }}</td>
+          <td>{{ o.phone }}</td>
+          <td>{{ o.service }}</td>
+          <td>{{ o.network or '-' }}</td>
+          <td>{{ o.amount or '-' }}</td>
+          <td>{{ o.recipient or '-' }}</td>
+          <td>{{ o.notes or '-' }}</td>
+          <td>{{ o.created_at }}</td>
+          <td><span class="status status-{{ o.status|lower }}">{{ o.status }}</span></td>
+          <td class="row-actions">
+            <form action="{{ url_for('toggle_order', order_id=o.id) }}" method="POST">
+              <button type="submit" class="btn btn-sm">Toggle</button>
+            </form>
+            <form action="{{ url_for('delete_order', order_id=o.id) }}" method="POST"
+                  onsubmit="return confirm('Delete order #{{ o.id }}?');">
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="empty-note">No orders yet.</p>
+  {% endif %}
+
+  <h2>Messages</h2>
+  {% if messages %}
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Message</th><th>Date</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        {% for m in messages %}
+        <tr>
+          <td>{{ m.id }}</td>
+          <td>{{ m.name }}</td>
+          <td>{{ m.email or '-' }}</td>
+          <td>{{ m.phone or '-' }}</td>
+          <td>{{ m.message }}</td>
+          <td>{{ m.created_at }}</td>
+          <td>
+            <form action="{{ url_for('delete_message', message_id=m.id) }}" method="POST"
+                  onsubmit="return confirm('Delete message #{{ m.id }}?');">
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="empty-note">No messages yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

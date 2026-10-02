@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+{% block bodyclass %}home-page{% endblock %}
+
+{% block content %}
+
+<!-- ===================== NAVBAR ===================== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="#home" class="nav-logo">💛 {{ site.brand }}</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#order">Order</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#order" class="btn btn-primary nav-cta">Order Now</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===================== HERO (3D) ===================== -->
+<section class="hero" id="home">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Certified MTN Mobile Money Agent</p>
+    <h1 class="hero-title">
+      Hi, I'm <span class="highlight">{{ site.name }}</span>
+    </h1>
+    <h2 class="hero-subtitle">{{ site.tagline }}</h2>
+    <p class="hero-tagline">{{ site.subtitle }}</p>
+    <div class="hero-buttons">
+      <a href="#order" class="btn btn-primary">Quick Order</a>
+      <a href="https://wa.me/{{ site.whatsapp_number }}" target="_blank" class="btn btn-whatsapp">WhatsApp Me</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-number" data-count="{{ site.customers_served }}">0</span>
+        <span class="stat-label">Happy Customers</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number" data-count="{{ site.years_active }}">0</span>
+        <span class="stat-label">Years Active</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number" data-count="{{ site.transactions_monthly }}">0</span>
+        <span class="stat-label">Monthly Transactions</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number" data-decimal="{{ site.rating }}">0</span>
+        <span class="stat-label">Average Rating</span>
+      </div>
+    </div>
+  </div>
+  <a href="#services" class="scroll-down" aria-label="Scroll down">
+    <span></span>
+  </a>
+</section>
+
+<!-- ===================== SERVICES ===================== -->
+<section class="section services" id="services">
+  <div class="container">
+    <p class="section-eyebrow">What I Offer</p>
+    <h2 class="section-title">My Services</h2>
+    <p class="section-desc">
+      Everything you need for mobile money and airtime, all in one trusted place.
+    </p>
+    <div class="services-grid">
+      {% for s in services %}
+      <div class="service-card" style="--delay: {{ loop.index0 }}">
+        <div class="service-icon">{{ s.icon }}</div>
+        <h3>{{ s.title }}</h3>
+        <p>{{ s.desc }}</p>
+        <ul class="service-points">
+          {% for p in s.points %}
+          <li>{{ p }}</li>
+          {% endfor %}
+        </ul>
+        <a href="#order" class="service-link" data-service="{{ s.key }}">Order this →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABOUT ===================== -->
+<section class="section about" id="about">
+  <div class="container about-grid">
+    <div class="about-image-wrap">
+      <div class="about-image-glow"></div>
+      <div class="about-image-frame">
+        <div class="about-avatar">👩🏽‍💼</div>
+      </div>
+      <div class="about-badge">
+        <span class="about-badge-icon">🏅</span>
+        <div>
+          <strong>Agent ID</strong>
+          <span>{{ site.agent_id }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="about-text">
+      <p class="section-eyebrow">About Me</p>
+      <h2 class="section-title">Meet {{ site.name }}</h2>
+      <p class="about-bio">{{ site.bio }}</p>
+      <div class="about-info-grid">
+        <div class="about-info">
+          <span class="about-info-icon">📍</span>
+          <div><strong>Location</strong><p>{{ site.location }}</p></div>
+        </div>
+        <div class="about-info">
+          <span class="about-info-icon">📞</span>
+          <div><strong>Phone</strong><p>{{ site.phone_display }}</p></div>
+        </div>
+        <div class="about-info">
+          <span class="about-info-icon">💳</span>
+          <div><strong>MoMo Number</strong><p>{{ site.momo_number }}</p></div>
+        </div>
+        <div class="about-info">
+          <span class="about-info-icon">✉️</span>
+          <div><strong>Email</strong><p>{{ site.email }}</p></div>
+        </div>
+      </div>
+      <h3 class="hours-title">🕒 Working Hours</h3>
+      <ul class="hours-list">
+        {% for day, time in site.hours %}
+        <li><span>{{ day }}</span><span>{{ time }}</span></li>
+        {% endfor %}
+      </ul>
+      <a href="#order" class="btn btn-primary">Get In Touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ORDER FORM ===================== -->
+<section class="section order-section" id="order">
+  <div class="container">
+    <p class="section-eyebrow">Quick Request</p>
+    <h2 class="section-title">Place Your Order</h2>
+    <p class="section-desc">
+      Fill the form below and {{ site.name }} will reach out to confirm.
+    </p>
+    <div class="order-grid">
+      <form class="order-form" action="{{ url_for('place_order') }}" method="POST">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="full_name">Full Name *</label>
+            <input type="text" id="full_name" name="full_name" placeholder="e.g. Kofi Mensah" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" id="phone" name="phone" placeholder="024XXXXXXX" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="service">Service Needed *</label>
+            <select id="service" name="service" required>
+              <option value="" disabled selected>Choose a service</option>
+              {% for s in services %}
+              <option value="{{ s.key }}">{{ s.icon }} {{ s.title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="network">Network</label>
+            <select id="network" name="network">
+              {% for n in networks %}
+              <option value="{{ n }}">{{ n }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="amount">Amount (GH₵)</label>
+            <input type="text" id="amount" name="amount" placeholder="e.g. 50">
+          </div>
+          <div class="form-group">
+            <label for="recipient">Recipient Number (if different)</label>
+            <input type="tel" id="recipient" name="recipient" placeholder="Optional">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="notes">Additional Notes</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="Bundle size, transfer details, extra notes..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Submit Order Request</button>
+      </form>
+      <div class="order-side">
+        <div class="order-card">
+          <h3>Fast and Secure</h3>
+          <p>All transactions are confirmed personally by {{ site.name }} before processing.</p>
+        </div>
+        <div class="order-card">
+          <h3>Prefer WhatsApp?</h3>
+          <p>Skip the form and message directly for instant service.</p>
+          <a href="https://wa.me/{{ site.whatsapp_number }}" target="_blank" class="btn btn-whatsapp btn-block">Chat on WhatsApp</a>
+        </div>
+        <div class="order-card">
+          <h3>Call Directly</h3>
+          <p>Reach {{ site.name }} during working hours.</p>
+          <a href="tel:{{ site.phone_tel }}" class="btn btn-outline btn-block">{{ site.phone_display }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TESTIMONIALS ===================== -->
+<section class="section testimonials" id="testimonials">
+  <div class="container">
+    <p class="section-eyebrow">Customer Love</p>
+    <h2 class="section-title">What Customers Say</h2>
+    <div class="testimonials-grid">
+      {% for t in testimonials %}
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"{{ t.text }}"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">{{ t.name[0] }}</div>
+          <div>
+            <strong>{{ t.name }}</strong>
+            <span>{{ t.role }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section class="section contact" id="contact">
+  <div class="container contact-grid">
+    <div class="contact-info">
+      <p class="section-eyebrow">Get In Touch</p>
+      <h2 class="section-title">Let's Talk</h2>
+      <p class="section-desc">Have a question about rates or bundles? Send a message any time.</p>
+      <div class="contact-detail"><span>LOC</span><p>{{ site.location }}</p></div>
+      <div class="contact-detail"><span>TEL</span><p>{{ site.phone_display }}</p></div>
+      <div class="contact-detail"><span>MAIL</span><p>{{ site.email }}</p></div>
+      <div class="social-links">
+        <a href="{{ site.social.facebook }}" aria-label="Facebook">Fb</a>
+        <a href="{{ site.social.instagram }}" aria-label="Instagram">Ig</a>
+        <a href="{{ site.social.twitter }}" aria-label="Twitter">X</a>
+        <a href="{{ site.social.tiktok }}" aria-label="TikTok">Tk</a>
+      </div>
+    </div>
+    <form class="contact-form" action="{{ url_for('contact') }}" method="POST">
+      <div class="form-group">
+        <label for="name">Name *</label>
+        <input type="text" id="name" name="name" placeholder="Your name" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="cphone">Phone</label>
+          <input type="tel" id="cphone" name="phone" placeholder="024XXXXXXX">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="message">Message *</label>
+        <textarea id="message" name="message" rows="4" placeholder="Your message..." required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+    </form>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <a href="#home" class="nav-logo">{{ site.brand }}</a>
+      <p>{{ site.tagline }}</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <a href="#services">Services</a>
+      <a href="#about">About</a>
+      <a href="#order">Order</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <p>{{ site.phone_display }}</p>
+      <p>{{ site.email }}</p>
+      <p>{{ site.location }}</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; {{ current_year }} {{ site.brand }}. All rights reserved.</p>
+    <a href="{{ url_for('admin_login') }}" class="admin-link">Admin</a>
+  </div>
+</footer>
+
+<a href="https://wa.me/{{ site.whatsapp_number }}" target="_blank" class="whatsapp-float" aria-label="Chat on WhatsApp">WA</a>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/hero3d.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
